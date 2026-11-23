@@ -1,169 +1,265 @@
-<!DOCTYPE HTML>
-<!--
-	Massively by HTML5 UP
-	html5up.net | @ajlkn
-	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
--->
-<html>
-	<head>
-		<title>Naveen Madapana</title>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-		<link rel="stylesheet" href="assets/css/main.css" />
-		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
-	</head>
-	<body class="is-preload">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Naveen Madapana — AI/ML Research Engineer</title>
+  <meta name="description" content="AI/ML research engineer specializing in generative AI, multimodal LLMs, 3D computer vision, and robotics.">
+  <meta property="og:title" content="Naveen Madapana">
+  <meta property="og:description" content="AI/ML research engineer specializing in generative AI, multimodal LLMs, 3D computer vision, and robotics.">
+  <script>
+    // Set theme before paint to avoid a flash
+    (function () {
+      var t = localStorage.getItem('theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script>
+  <link rel="stylesheet" href="assets/css/site.css">
+</head>
+<body>
 
-		<!-- Wrapper -->
-			<div id="wrapper" class="fade-in">
+<nav class="nav">
+  <div class="wrap">
+    <a class="brand" href="#top">Naveen Madapana</a>
+    <ul>
+      <li><a href="#impact">Impact</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#research">Research</a></li>
+      <li><a href="#publications">Publications</a></li>
+      <li><a href="#about">Education &amp; Honors</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode"></button>
+  </div>
+</nav>
 
-				<!-- Intro -->
-					<div id="intro">
-						<!-- This is<br /> -->
-						<h1>Naveen Madapana</h1>
-						<p> I am currently an applied scientist at Amazon Alexa AI working on developing deep models for 3D reconstruction 
-							of avatars and human faces, video and audio deep networks, leading data collection efforts, and mentoring 
-							projects related to neural rendering and audio to full body dance animations. 
-							Prior to joining Amazon, I have done my Ph.D. with <a href="https://web.ics.purdue.edu/~jpwachs/">Dr. Juan Wachs </a>
-							in the <a href="https://engineering.purdue.edu/isat/">ISAT</a> lab at Purdue University.
-							My research interests include human-computer interaction, AI for health care applications, and machine learning. 
-							Outside work, I love to cook, run, play basketball, hike and travel.
-						</p>
-						<ul class="actions">
-							<li><a href="#header" class="button icon solid solo fa-arrow-down scrolly">Continue</a></li>
-						</ul>
-					</div>
+<main id="top">
+  <header class="hero wrap">
+    <h1>Naveen Madapana</h1>
+    <p class="role">AI/ML Research Engineer · Cupertino, CA</p>
+    <p>AI/ML research engineer specializing in generative AI, multimodal large language models, 3D computer vision, and robotics, with a decade of experience taking ideas from research to production. I lead projects, mentor engineers, and enjoy hard problems that need both rigorous science and solid engineering, especially ones that make a meaningful impact on people's lives.</p>
+    <p>My work ships in products used by millions, including GenAI capabilities on Amazon Echo Show, the intelligence and identity security ML stack behind IDs in Apple Wallet, Apple HomeView, and Face Unlock on iPhone Duo.</p>
+    <div class="links">
+      <a class="btn primary" href="https://www.linkedin.com/in/nmadapan/" target="_blank" rel="noopener">Connect on LinkedIn</a>
+      <a class="btn" href="https://scholar.google.com/citations?user=X6gXGR4AAAAJ&hl=en" target="_blank" rel="noopener">Google Scholar</a>
+      <a class="btn" href="https://github.com/nmadapan" target="_blank" rel="noopener">GitHub</a>
+    </div>
+  </header>
 
-				<!-- Header -->
-					<header id="header">
-						<a href="index.html" class="logo">Naveen Madapana</a>
-					</header>
+  <section id="impact">
+    <div class="wrap">
+      <h2>Impact</h2>
+      <div class="impact">
+        <article class="impact-item">
+          <div class="tag">Apple Wallet</div>
+          <h3>IDs in Apple Wallet</h3>
+          <p>Contributed to the intelligence and identity security ML stack behind IDs in Apple Wallet. The work spans 3D facial analysis and training neural networks for face-related tasks, with the goal of delivering the highest levels of security guarantees for people's most sensitive credentials.</p>
+          <a class="more" href="https://learn.wallet.apple/id" target="_blank" rel="noopener">Learn more →</a>
+        </article>
+        <article class="impact-item">
+          <div class="tag">Apple HomeView</div>
+          <h3>Apple HomeView</h3>
+          <p>Contributed to the face recognition and intelligence capabilities stack in Apple HomeView, building models that recognize people accurately and reliably in the home.</p>
+          <a class="more" href="https://www.apple.com/apple-homeview/" target="_blank" rel="noopener">Learn more →</a>
+        </article>
+        <article class="impact-item">
+          <div class="tag">iPhone Duo</div>
+          <h3>Face Unlock on iPhone Duo</h3>
+          <p>Contributed to Face Unlock on iPhone Duo, bringing secure, on-device face authentication to a new device.</p>
+        </article>
+      </div>
+    </div>
+  </section>
 
-				<!-- Nav -->
-					<nav id="nav">
-						<ul class="links">
-							<li class="active"><a href="index.html">Research</a></li>
-							<li><a href="publications.html">Publications</a></li>
-							<li><a href="blog.html">Blog</a></li>
-							<li><a href="news.html">News</a></li>
-							<li><a href="contact.html">Contact</a></li>
-						</ul>
-						<ul class="icons">
-							<li><a href="https://www.linkedin.com/in/nmadapan/" class="icon brands fa-linkedin"><span class="label">LinkedIn</span></a></li>
-							<li><a href="https://github.com/nmadapan" class="icon brands fa-github"><span class="label">GitHub</span></a></li>
-							<li><a href="https://scholar.google.com/citations?user=X6gXGR4AAAAJ&hl=en&oi=ao" class="icon brands fa-google"><span class="label">Google</span></a></li>
-						</ul>
-					</nav>
+  <section id="experience">
+    <div class="wrap">
+      <h2>Experience</h2>
+      <div class="timeline">
+        <div class="job">
+          <div class="when">Mar 2023 – Present</div>
+          <div><h3>Senior AI/ML Research Engineer</h3><p class="org">Apple · Cupertino, CA</p></div>
+        </div>
+        <div class="job">
+          <div class="when">Feb 2022 – Jan 2023</div>
+          <div><h3>Senior Applied Scientist</h3><p class="org">Amazon Lab126 · Sunnyvale, CA</p></div>
+        </div>
+        <div class="job">
+          <div class="when">May – Aug 2021</div>
+          <div>
+            <h3>ML Intern, Mixed Reality</h3><p class="org">Meta Reality Labs · Seattle, WA</p>
+            <p>Built generalizable intent-to-interact prediction models for VR/AR from physiological data.</p>
+          </div>
+        </div>
+        <div class="job">
+          <div class="when">Sep 2016 – Dec 2021</div>
+          <div>
+            <h3>Research Assistant</h3><p class="org">Purdue University · ISAT Lab, advised by <a href="https://web.ics.purdue.edu/~jpwachs/" target="_blank" rel="noopener">Dr. Juan Wachs</a></p>
+            <p>Real-time gesture recognition for the operating room, transfer learning across surgical robots, and few-shot learning for recognizing objects from one or a few examples.</p>
+          </div>
+        </div>
+        <div class="job">
+          <div class="when">May – Jul 2015</div>
+          <div>
+            <h3>Research Scholar</h3><p class="org">KAIST · Cognitive Neuro-Robotics Lab, South Korea</p>
+            <p>Software for automatic visuomotor data generation (grasping, manipulation, obstacle avoidance) on the iCub and NAO humanoids.</p>
+          </div>
+        </div>
+        <div class="job">
+          <div class="when">Aug 2013 – Aug 2016</div>
+          <div>
+            <h3>Research Scholar</h3><p class="org">IIT Guwahati · Mechatronics &amp; Robotics Lab</p>
+            <p>Humanoid robotics, gesture recognition, and face recognition.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-				<!-- Main -->
-					<div id="main">
+  <section id="research">
+    <div class="wrap">
+      <h2>Selected research</h2>
+      <div class="cards">
+        <article class="card">
+          <img src="images/projects/long-tail.jpg" alt="Long-tailed class distribution" loading="lazy">
+          <div class="body">
+            <div class="tag">Ongoing theme</div>
+            <h3>Human-like learning systems</h3>
+            <ul><li>Machines need hundreds of examples to learn a class; humans need a few, or just a description</li><li>Few-, one-, and zero-shot learning as a path to continual, human-like learning</li></ul>
+          </div>
+        </article>
+        <article class="card">
+          <img src="images/projects/wacv-vpe.jpg" alt="Prototypical encoder architecture" loading="lazy">
+          <div class="body">
+            <div class="tag">WACV 2021</div>
+            <h3>One-shot prototypical encoders</h3>
+            <ul><li>Predicts class prototypes from raw images via image-to-image translation</li><li>Reduces latent-space hubness</li><li>Adds contrastive and multi-task losses to sharpen few-shot discrimination</li></ul>
+            <a class="more" href="https://openaccess.thecvf.com/content/WACV2021/papers/Xiao_One-Shot_Image_Recognition_Using_Prototypical_Encoders_With_Reduced_Hubness_WACV_2021_paper.pdf" target="_blank" rel="noopener">Read paper →</a>
+          </div>
+        </article>
+        <article class="card">
+          <img src="images/projects/fg2020-zsl.jpg" alt="Feature selection for zero-shot learning" loading="lazy">
+          <div class="body">
+            <div class="tag">FG 2020</div>
+            <h3>Feature selection for zero-shot gesture recognition</h3>
+            <ul><li>Compares heuristic, raw-velocity, and deep-network features</li><li>Linear and bilinear models that jointly optimize semantic and classification losses</li></ul>
+            <a class="more" href="https://ieeexplore.ieee.org/abstract/document/9320217" target="_blank" rel="noopener">Read paper →</a>
+          </div>
+        </article>
+        <article class="card">
+          <img src="images/projects/agreement.jpg" alt="Soft agreement rate" loading="lazy">
+          <div class="body">
+            <div class="tag">IEEE THMS 2020</div>
+            <h3>Agreement analysis with gesture description vectors</h3>
+            <ul><li>Builds gesture descriptors directly into agreement analysis</li><li>Introduces the soft agreement rate (SAR)</li><li>Shows existing agreement metrics are a special case</li></ul>
+            <a class="more" href="https://ieeexplore.ieee.org/abstract/document/9104742" target="_blank" rel="noopener">Read paper →</a>
+          </div>
+        </article>
+        <article class="card">
+          <img src="images/projects/zsl-dataset.jpg" alt="Gesture attributes dataset" loading="lazy">
+          <div class="body">
+            <div class="tag">FG 2019</div>
+            <h3>Zero-shot gesture dataset</h3>
+            <ul><li>First annotated attribute database for ChaLearn 2013 and MSRC-12 gestures</li><li>Built from linguistics literature and Amazon Mechanical Turk annotation</li></ul>
+            <a class="more" href="https://ieeexplore.ieee.org/abstract/document/8756548" target="_blank" rel="noopener">Read paper →</a>
+          </div>
+        </article>
+        <article class="card">
+          <img src="images/projects/desk.jpg" alt="DESK robotic skills dataset" loading="lazy">
+          <div class="body">
+            <div class="tag">arXiv 2019</div>
+            <h3>DESK: surgical skill transfer across robots</h3>
+            <ul><li>Dexterous surgical skills recorded on Taurus II, simulated Taurus II, and YuMi robots</li><li>Used to study knowledge transfer across robot platforms for gesture classification</li></ul>
+            <a class="more" href="https://arxiv.org/abs/1903.00959" target="_blank" rel="noopener">Read paper →</a>
+          </div>
+        </article>
+        <article class="card">
+          <img src="images/projects/or-interface.jpg" alt="Touchless operating room interface" loading="lazy">
+          <div class="body">
+            <div class="tag">2016 – 2020 · AHRQ-funded</div>
+            <h3>Touchless interface for the operating room</h3>
+            <ul><li>Four-year, AHRQ-funded project to reduce touch-based infections</li><li>Gesture- and speech-driven system for surgeons</li><li>Elicitation studies and user experiments with surgeons</li></ul>
+            <a class="more" href="https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0198092" target="_blank" rel="noopener">Read paper →</a>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
 
-						<!-- Featured Post -->
-							<article class="post featured">
-								<header class="major">
-									<span class="date">April 2021</span>
-									<h2><a href="#">Human-Like Learning Systems</a></h2>
-									<p>There are significant differences between the way machines and humans represent knowledge, assimilate and learn new concepts. For instance, machines require hundreds of examples to learn to classify, however, humans can efficiently discriminate categories just by looking at few examples of them or solely based on semantic information. The next generation learning techniques such as few-shot, one-shot and zero-shot learning will aid this ultimate goal of building machines that can continually learn like humans. </p>
-								</header>
-								<a href="#" class="image main"><img src="images/long-tail.png" alt="" /></a>
-								<ul class="actions special">
-									<li><a href="#" class="button large">Full Story</a></li>
-								</ul>
-							</article>
+  <section id="publications">
+    <div class="wrap">
+      <h2>Publications</h2>
+      <p class="muted" style="margin-top:-12px">Full list on <a href="https://scholar.google.com/citations?user=X6gXGR4AAAAJ&hl=en" target="_blank" rel="noopener">Google Scholar</a>.</p>
 
-						<!-- Posts -->
-							<section class="posts">
-								<article>
-									<header>
-										<span class="date">October 2020</span>
-										<h2><a href="https://openaccess.thecvf.com/content/WACV2021/papers/Xiao_One-Shot_Image_Recognition_Using_Prototypical_Encoders_With_Reduced_Hubness_WACV_2021_paper.pdf">One-Shot <br />
-										Prototypical Encoders</a></h2>
-									</header>
-									<a href="https://openaccess.thecvf.com/content/WACV2021/papers/Xiao_One-Shot_Image_Recognition_Using_Prototypical_Encoders_With_Reduced_Hubness_WACV_2021_paper.pdf" class="image fit"><img src="images/wacv-vpe-pp.png" alt="" /></a>
-									<p>This work proposes to learn an image-to-image translation task in which the goal is to predict the class prototypes from raw images. This approach regulates the latent space by inherently reducing data hubness and it further incorporates contrastive and multi-task losses to increase the discriminative ability of few-shot models.</p>
-<!-- 									<ul class="actions special">
-										<li><a href="https://openaccess.thecvf.com/content/WACV2021/papers/Xiao_One-Shot_Image_Recognition_Using_Prototypical_Encoders_With_Reduced_Hubness_WACV_2021_paper.pdf" class="button">Paper</a></li>
-									</ul> -->
-								</article>
-								<article>
-									<header>
-										<span class="date">September 2020</span>
-										<h2><a href="https://ieeexplore.ieee.org/abstract/document/9320217">Feature Selection<br />
-										Zero-Shot Learning</a></h2>
-									</header>
-									<a href="https://ieeexplore.ieee.org/abstract/document/9320217" class="image fit"><img src="images/fg2020_feature_selection.png" alt="" /></a>
-									<p>This project studies the effectiviness of three kinds of features: 1. heuristic-based, 2. raw velocity and 3. deep-network-based features in the context of zero-shot learning for gesture recognition. In addition, this work proposes a linear and bi-linear model that jointly optimizes for semantic and classification losses. </p>
-<!-- 									<ul class="actions special">
-										<li><a href="#" class="button">Full Story</a></li>
-									</ul> -->
-								</article>
-								<article>
-									<header>
-										<span class="date">June 2020</span>
-										<h2><a href="https://ieeexplore.ieee.org/abstract/document/9104742">Agreement Analysis<br />
-										Gesture Semantic Vectors</a></h2>
-									</header>
-									<a href="https://ieeexplore.ieee.org/abstract/document/9104742" class="image fit"><img src="images/ex-soft-repr.png" alt="" /></a>
-									<p>A general framework that inherently incorporates gesture descriptors into the agreement analysis. A new metric referred to as soft agreement rate (SAR) to measure the level of agreement was proposed. Our computational experiments to demonstrate that existing agreement metrics are a special case of our approach.</p>
-<!-- 									<ul class="actions special">
-										<li><a href="#" class="button">Full Story</a></li>
-									</ul> -->
-								</article>
-								<article>
-									<header>
-										<span class="date">April 14, 2017</span>
-										<h2><a href="#">Touchless Interface For<br />
-										Opearting Room </a></h2>
-									</header>
-									<a href="#" class="image fit"><img src="images/surgeon_gest_speech.png" alt="" /></a>
-									<p>This project lasted for over four years and is funded by the Agency of Healthcare Research and Quality. The main goal is to reduce the touch-based infections by building a touchless system powered by speech and gestures in the OR. User experiments were conducted with surgeons to know their preferneces and to test the system. <a href="#">Read more</a> </p>
-<!-- 									<ul class="actions special">
-										<li><a href="#" class="button">Full Story</a></li>
-									</ul> -->
-								</article>
-								<article>
-									<header>
-										<span class="date">May 2020</span>
-										<h2><a href="https://ieeexplore.ieee.org/abstract/document/8756548">ZSL Dataset<br />
-										Gesture Recognition</a></h2>
-									</header>
-									<a href="https://ieeexplore.ieee.org/abstract/document/8756548" class="image fit"><img src="images/gesture-big-picture-attributes3.png" alt="" /></a>
-									<p>This work presents the first annotated database of attributes for the categories present in ChaLearn 2013 and MSRC-12 datasets. We relied on literature in semantic and computational linguistics, and crowdsourced annotation platforms such as Amazon Mechanical Turk to build this attribute-based dataset for gestures. </p>
-<!-- 									<ul class="actions special">
-										<li><a href="#" class="button">Full Story</a></li>
-									</ul> -->
-								</article>
-								<article>
-									<header>
-										<span class="date">October 2019</span>
-										<h2><a href="https://arxiv.org/pdf/1903.00959.pdf">DESK<br />
-										Robitics Activity Dataset</a></h2>
-									</header>
-									<a href="https://arxiv.org/pdf/1903.00959.pdf" class="image fit"><img src="images/desk.PNG" alt="" /></a>
-									<p>DESK (Dexterous Surgical Skill) dataset comprises a set of surgical robotic skills collected during a surgical training task using three robotic platforms: the Taurus II robot, Taurus II simulated robot, and the YuMi robot. This dataset was used to test the idea of transferring knowledge across different domains (eg from Taurus to YuMi robot) for a surgical gesture classification task. </p>
-<!-- 									<ul class="actions special">
-										<li><a href="#" class="button">Full Story</a></li>
-									</ul> -->
-								</article>
-							</section>
+      <h3 class="pub-year">2021</h3>
+      <ul class="pubs">
+        <li class="pub"><span class="title">One-shot image recognition using prototypical encoders with reduced hubness</span><br>C. Xiao, <span class="me">N. Madapana</span>, J. Wachs<br><span class="venue">WACV 2021 · <a href="https://openaccess.thecvf.com/content/WACV2021/html/Xiao_One-Shot_Image_Recognition_Using_Prototypical_Encoders_With_Reduced_Hubness_WACV_2021_paper.html" target="_blank" rel="noopener">Paper</a></span></li>
+      </ul>
 
-					</div>
+      <h3 class="pub-year">2020</h3>
+      <ul class="pubs">
+        <li class="pub"><span class="title">Correlation between gestures' qualitative properties and usability metrics</span><span class="badge">Best student paper</span><br>D. Chanci, <span class="me">N. Madapana</span>, G. Gonzalez, J. Wachs<br><span class="venue">HFES Annual Meeting 2020 · <a href="https://journals.sagepub.com/doi/abs/10.1177/1071181320641168" target="_blank" rel="noopener">Paper</a></span></li>
+        <li class="pub"><span class="title">Feature selection for zero-shot gesture recognition</span><br><span class="me">N. Madapana</span>, J. Wachs<br><span class="venue">IEEE FG 2020 · <a href="https://ieeexplore.ieee.org/abstract/document/9320217" target="_blank" rel="noopener">Paper</a></span></li>
+        <li class="pub"><span class="title">Gesture agreement assessment using description vectors</span><br><span class="me">N. Madapana</span>, G. Gonzalez, J. Wachs<br><span class="venue">IEEE FG 2020 · <a href="https://ieeexplore.ieee.org/abstract/document/9320172" target="_blank" rel="noopener">Paper</a></span></li>
+        <li class="pub"><span class="title">Agreement study using gesture description analysis</span><br><span class="me">N. Madapana</span>, G. Gonzalez, L. Zhang, R. Rodgers, J. Wachs<br><span class="venue">IEEE Transactions on Human-Machine Systems 50(5) · <a href="https://ieeexplore.ieee.org/abstract/document/9104742" target="_blank" rel="noopener">Paper</a></span></li>
+      </ul>
 
-				<!-- Copyright -->
-					<!-- <div id="copyright">
-						<ul><li>&copy; Untitled</li><li>Design: <a href="https://html5up.net">HTML5 UP</a></li></ul>
-					</div> -->
+      <h3 class="pub-year">2019</h3>
+      <ul class="pubs">
+        <li class="pub"><span class="title">Preference elicitation: obtaining gestural guidelines for PACS in neurosurgery</span><br><span class="me">N. Madapana</span>, G. Gonzalez, R. Taneja, R. Rodgers, L. Zhang, J. Wachs<br><span class="venue">International Journal of Medical Informatics 130 · <a href="https://www.sciencedirect.com/science/article/abs/pii/S1386505618308633" target="_blank" rel="noopener">Paper</a></span></li>
+        <li class="pub"><span class="title">Database of gesture attributes: zero shot learning for gesture recognition</span><br><span class="me">N. Madapana</span>, J. Wachs<br><span class="venue">IEEE FG 2019 · <a href="https://ieeexplore.ieee.org/abstract/document/8756548" target="_blank" rel="noopener">Paper</a></span></li>
+        <li class="pub"><span class="title">DESK: a robotic activity dataset for dexterous surgical skills transfer to medical robots</span><br><span class="me">N. Madapana</span>, M. M. Rahman, N. Sanchez-Tamayo, M. V. Balakuntala, G. Gonzalez, J. P. Bindu, L. N. V. Venkatesh, et al.<br><span class="venue">arXiv:1903.00959 · <a href="https://arxiv.org/abs/1903.00959" target="_blank" rel="noopener">Paper</a></span></li>
+      </ul>
 
-			</div>
+      <h3 class="pub-year">2018</h3>
+      <ul class="pubs">
+        <li class="pub"><span class="title">Looking beyond the gesture: vocabulary acceptability criteria for gesture elicitation studies</span><br>G. Gonzalez, <span class="me">N. Madapana</span>, R. Taneja, L. Zhang, R. Rodgers, J. Wachs<br><span class="venue">HFES Annual Meeting 2018 · <a href="https://journals.sagepub.com/doi/abs/10.1177/1541931218621230" target="_blank" rel="noopener">Paper</a></span></li>
+        <li class="pub"><span class="title">Hard zero shot learning for gesture recognition</span><br><span class="me">N. Madapana</span>, J. Wachs<br><span class="venue">ICPR 2018 · <a href="https://ieeexplore.ieee.org/abstract/document/8545869" target="_blank" rel="noopener">Paper</a></span></li>
+        <li class="pub"><span class="title">Gestures for PACS operation in the operating room: is there any standard?</span><br><span class="me">N. Madapana</span>, G. Gonzalez, R. Rodgers, L. Zhang, J. Wachs<br><span class="venue">PLoS ONE 13(6) · <a href="https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0198092" target="_blank" rel="noopener">Paper</a></span></li>
+      </ul>
 
-		<!-- Scripts -->
-			<script src="assets/js/jquery.min.js"></script>
-			<script src="assets/js/jquery.scrollex.min.js"></script>
-			<script src="assets/js/jquery.scrolly.min.js"></script>
-			<script src="assets/js/browser.min.js"></script>
-			<script src="assets/js/breakpoints.min.js"></script>
-			<script src="assets/js/util.js"></script>
-			<script src="assets/js/main.js"></script>
+      <h3 class="pub-year">2017 and earlier</h3>
+      <ul class="pubs">
+        <li class="pub"><span class="title">ZSGL: zero shot gestural learning</span><br><span class="me">N. Madapana</span>, J. Wachs<br><span class="venue">ACM ICMI 2017 · <a href="https://dl.acm.org/doi/abs/10.1145/3136755.3136774" target="_blank" rel="noopener">Paper</a></span></li>
+        <li class="pub"><span class="title">Achieving "synergy" in cognitive behavior of humanoids via deep learning of dynamic visuo-motor-attentional coordination</span><br>J. Hwang, M. Jung, <span class="me">N. Madapana</span>, J. Kim, M. Choi, J. Tani<br><span class="venue">IEEE-RAS Humanoids 2015 · <a href="https://ieeexplore.ieee.org/abstract/document/7363448" target="_blank" rel="noopener">Paper</a></span></li>
+      </ul>
+    </div>
+  </section>
 
-	</body>
+  <section id="about">
+    <div class="wrap two-col">
+      <div>
+        <h2>Education</h2>
+        <ul class="plain">
+          <li><strong>Ph.D., Computer Vision and Machine Learning</strong><span class="sub">Purdue University · 2016 – 2021</span></li>
+          <li><strong>Bachelors in Computer Science and Mechanical Engineering</strong><span class="sub">IIT Guwahati · 2012 – 2016</span></li>
+        </ul>
+      </div>
+      <div>
+        <h2>Honors</h2>
+        <ul class="plain">
+          <li>Best student paper, HFES Annual Meeting 2020</li>
+          <li>Ph.D. consortium fellowship, 2020</li>
+          <li>Theodore J. &amp; Isabel M. Williams Fellowship in Industrial Control Systems, 2019–2020</li>
+          <li>1st place, robotics competition, Technical Festival of Gauhati University</li>
+          <li>Runner-up, robotics competition, Kshitij (IIT Kharagpur)</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact">
+    <div class="wrap">
+      <h2>Contact</h2>
+      <p>The best way to reach me is on <a href="https://www.linkedin.com/in/nmadapan/" target="_blank" rel="noopener">LinkedIn</a>.</p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">© <span id="year">2026</span> Naveen Madapana. Views expressed here are my own.</div>
+</footer>
+
+<script src="assets/js/site.js"></script>
+<script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
 </html>
