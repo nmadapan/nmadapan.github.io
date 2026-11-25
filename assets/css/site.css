@@ -6,7 +6,7 @@
 }
 
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; scroll-padding-top: 72px; }
+html { scroll-behavior: smooth; scroll-padding-top: 126px; }
 body {
   margin: 0; background: var(--bg); color: var(--text);
   font: 18px/1.65 var(--font); -webkit-font-smoothing: antialiased;
@@ -65,6 +65,8 @@ h2 { font-size: 1.6rem; letter-spacing: -.02em; margin: 0 0 28px; }
 .job h3 { font-size: 1.05rem; margin: 0; }
 .job .org { color: var(--muted); font-size: 15px; margin: 0 0 6px; }
 .job p { margin: 6px 0 0; font-size: 16px; }
+.job ul { margin: 8px 0 0; padding-left: 20px; font-size: 16px; }
+.job li { margin-bottom: 4px; }
 
 /* Project cards */
 .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 22px; }
@@ -92,7 +94,6 @@ h2 { font-size: 1.6rem; letter-spacing: -.02em; margin: 0 0 28px; }
 .pub .title { font-weight: 600; color: var(--text); }
 .pub .me { font-weight: 700; color: var(--text); }
 .pub .venue { color: var(--muted); }
-.badge { display: inline-block; font-size: 12px; font-weight: 600; padding: 1px 8px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); margin-left: 6px; }
 
 
 footer { padding: 40px 0 56px; border-top: 1px solid var(--border); color: var(--muted); font-size: 14px; }
@@ -120,7 +121,7 @@ body {
 .btn.primary { background: linear-gradient(100deg, #6f8cff, #55d6ff); border: 0; color: #07080d !important; font-weight: 650; }
 section { border-top: 0; padding: 44px 0; }
 h2 { font-size: 1.1rem; text-transform: uppercase; letter-spacing: .14em; color: var(--muted); font-weight: 600; }
-.impact { grid-template-columns: 1.4fr 1fr 1fr; }
+.impact { grid-template-columns: 1fr 1fr; }
 .impact-item, .card, .job > div:last-child {
   background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
   backdrop-filter: blur(14px);
@@ -136,10 +137,42 @@ h2 { font-size: 1.1rem; text-transform: uppercase; letter-spacing: .14em; color:
 .card img { opacity: .92; }
 .pub { border-left-color: var(--border); }
 footer { border-top-color: var(--border); }
+/* Section tabs: a slim strip under the page tabs. Page label, then small bordered tabs, over a hairline. */
+.subnav { position: sticky; top: 57px; z-index: 9; background: rgba(7,8,13,.9); backdrop-filter: blur(14px); border-bottom: 1px solid var(--border); }
+.subnav .wrap { display: flex; align-items: center; gap: 18px; height: 60px; }
+.subnav .where {
+  flex: none; padding-right: 18px; border-right: 1px solid var(--border);
+  font-size: 11px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--muted);
+}
+.tabs-panel { display: flex; gap: 10px; overflow-x: auto; scrollbar-width: none; padding: 2px 0; }
+.tabs-panel::-webkit-scrollbar { display: none; }
+.tabs-panel .btn {
+  flex: none; white-space: nowrap; padding: 7px 16px; border-radius: 10px; font-size: 13.5px; font-weight: 500;
+  background: rgba(255,255,255,.03); border: 1px solid var(--border); color: var(--muted); backdrop-filter: none;
+  transition: border-color .2s ease, background .2s ease, color .2s ease;
+}
+.tabs-panel .btn:hover { color: var(--text); border-color: rgba(124,156,255,.5); }
+.tabs-panel .btn.active { color: var(--text); background: var(--accent-soft); border-color: rgba(124,156,255,.6); font-weight: 600; }
+.tabs-panel .btn.active:hover { color: var(--text); }
+
+/* Resume page: the resume's pages shown directly, full width, so it reads without downloading */
+#resume .wrap { max-width: 1000px; }
+.resume-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 20px; }
+.resume-head h2 { margin: 0; }
+.resume-actions { display: flex; gap: 10px; }
+.resume-pages { display: grid; gap: 24px; }
+.resume-page { display: block; width: 100%; height: auto; border-radius: 6px; background: #fff; box-shadow: 0 20px 50px rgba(0,0,0,.5); }
+.resume-note { margin: 22px 0 0; font-size: 14px; }
+
+.page-first { border-top: 0; padding-top: 64px; }
+
 @media (max-width: 900px) { .impact { grid-template-columns: 1fr; } .job { grid-template-columns: 1fr; } .job .when { padding-top: 0; } }
 
+.kw { color: #ffe3b8; font-weight: 500; background: rgba(255,196,107,.16); padding: 1px 6px; border-radius: 6px; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+
 @media (max-width: 680px) {
-  .nav ul { display: none; }
+  .nav .brand { display: none; }
+  .nav ul { gap: 16px; font-size: 14px; }
   .job { grid-template-columns: 1fr; gap: 2px; }
   .hero { padding-top: 56px; }
   .wrap { padding: 0 20px; }

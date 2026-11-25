@@ -1,5 +1,5 @@
 (function () {
-  var links = document.querySelectorAll('.nav ul a');
+  var links = document.querySelectorAll('.subnav a');
   var sections = Array.prototype.map.call(links, function (a) { return document.querySelector(a.getAttribute('href')); });
   var io = new IntersectionObserver(function (entries) {
     entries.forEach(function (e) {
@@ -8,4 +8,5 @@
     });
   }, { rootMargin: '-40% 0px -55% 0px' });
   sections.forEach(function (s) { if (s) io.observe(s); });
+  if (links.length) links[0].classList.add('active');
 })();
