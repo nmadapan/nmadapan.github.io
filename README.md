@@ -28,7 +28,7 @@ resume/
 ### Pages and navigation
 - **Top bar (page tabs):** Home, Research, Blog, Resume (opens `resume.html`), Contact (goes to LinkedIn). The same `<nav>` block, `<head>`, and footer are copied into each HTML file, so a change to the nav has to be made in all four pages.
 - **Section tab panel** (under the top bar, Home and Research only): a sticky strip with the page name and small bordered tabs that jump to sections. `assets/js/site.js` marks the section you are in. Home: Impact, Education & Experience, Hobbies, Contact. Research: Selected research, Publications.
-- The Resume page shows each page of the resume as an image, 1000px wide at most, so it reads without downloading. Page images are not selectable text; the PDF is.
+- The Resume page shows each page of the resume as an image, 1280px wide at most, so it reads without downloading. Page images are not selectable text; the PDF is.
 
 ### Design
 - Dark theme with a soft purple/cyan background glow, frosted-glass cards, and a blue-to-cyan accent. Design tokens are the CSS variables at the top of `assets/css/site.css`. Later rules in the "Design overrides" section win over the base rules above them. Keep the `@media` blocks at the bottom of the file.
@@ -64,7 +64,7 @@ Notes:
 - Check the render before committing: `sips -s format png resume.pdf --out /tmp/resume.png` shows page 1 on macOS.
 
 ### Design in one paragraph
-Navy name and titles (what you did), teal for structure and section headings, copper for organizations, dates, and years (where and when). The header is the name plus one line: email at the left, Website · LinkedIn · GitHub · Scholar at the right, in italics in a slightly bluer teal with no underline. Each role is `Role · Company` with dates and location at the far right. See `resume/RESUME_RULES.md` for the complete list of rules.
+Navy name and titles (what you did), teal for structure and section headings, copper for organizations, dates, and years (where and when). The header is the name plus one line: the email pattern `{firstname}.{lastname}@gmail.com` (plain text, not a link) at the left, Website · LinkedIn · GitHub · Scholar at the right, in italics in a slightly bluer teal with no underline. Each role is `Role · Company` with dates and location at the far right. See `resume/RESUME_RULES.md` for the complete list of rules.
 
 ## Keeping the resume in sync
 
@@ -72,7 +72,7 @@ When you change the website, apply the matching change to the resume. The two ar
 
 | Change on the website | What to do in `resume/build_resume.py` |
 |---|---|
-| Intro paragraphs on Home | `SUMMARY`: three plain one-line sentences. Do not repeat anything from the entries below (no product or employer names). |
+| Intro paragraphs on Home | `SUMMARY`: one flowing paragraph. Do not repeat anything from the entries below (no product or employer names). |
 | An Experience or Education bullet (Home timeline) | The matching bullet in `EXPERIENCE` or `EDUCATION`. Shorten it so it fits one line, start with a past-tense verb. |
 | A new job or degree | A new tuple: `(org, role, dates, location, [bullets])`. Education passes the lab and advisor line in the org field. |
 | Publications on Research | `PUBLICATIONS`: title, abbreviated venue, year. No authors. Keep it to a short selection; the HFES, FG 2020 feature selection, PACS, and best-student-paper items are intentionally left out. |
@@ -80,7 +80,7 @@ When you change the website, apply the matching change to the resume. The two ar
 | Impact cards, Selected research cards, highlighted keywords | Not on the resume. |
 | Skills & Technologies | Resume only. Edit `SKILLS` directly; there is no website equivalent. |
 
-Highlights: the resume bolds only five phrases, marked `**like this**` in the data (end-to-end model lifecycle, Safety AI, generative AI, Meta Quest, zero-shot and one-shot recognition). Do not add more without being asked.
+Highlights: the resume bolds only a few phrases, marked `**like this**` in the data (Apple Wallet, Apple HomeView, iPhone Duo, Safety AI, generative AI, Meta Quest, zero-shot and one-shot recognition). Do not add more without being asked.
 
 ### Checklist after any website text change
 1. Update the matching text in `build_resume.py` using the table above.

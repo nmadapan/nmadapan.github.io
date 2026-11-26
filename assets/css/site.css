@@ -156,7 +156,7 @@ footer { border-top-color: var(--border); }
 .tabs-panel .btn.active:hover { color: var(--text); }
 
 /* Resume page: the resume's pages shown directly, full width, so it reads without downloading */
-#resume .wrap { max-width: 1000px; }
+#resume .wrap { max-width: 1280px; }
 .resume-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 20px; }
 .resume-head h2 { margin: 0; }
 .resume-actions { display: flex; gap: 10px; }

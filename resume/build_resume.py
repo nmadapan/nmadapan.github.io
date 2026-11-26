@@ -20,18 +20,18 @@ OUT = Path(__file__).resolve().parent.parent / "resume.pdf"
 
 NAME = "Naveen Madapana"
 LINKS = [
-    ("naveen.madapana@gmail.com", "mailto:naveen.madapana@gmail.com"),
+    ("{firstname}.{lastname}@gmail.com", None),  # shown as a pattern, not a link, so the real address is not in the PDF
     ("Website", "https://nmadapan.github.io"),
     ("LinkedIn", "https://www.linkedin.com/in/nmadapan/"),
     ("GitHub", "https://github.com/nmadapan"),
     ("Scholar", "https://scholar.google.com/citations?user=X6gXGR4AAAAJ&hl=en"),
 ]
 
-SUMMARY = [
-    "AI/ML research engineer with a decade of experience taking GenAI and 3D vision from research to production.",
-    "Drawn to ambiguous, high-stakes problems where rigorous science and solid engineering must come together.",
-    "Motivated by using technology to solve real-world problems and empower people's lives.",
-]
+SUMMARY = (
+    "AI/ML research engineer with a decade of experience taking GenAI and 3D computer vision technologies from research "
+    "to production, shipping products used by millions. Drawn to ambiguous problems where rigorous science "
+    "meets solid engineering, using technology to solve real-world problems and empower people's lives."
+)
 
 # (category, skills) -- first draft; resume only, not on the website
 SKILLS = [
@@ -51,9 +51,9 @@ HOBBIES = [
 # (organization, role, dates, location, [bullets])
 EXPERIENCE = [
     ("Apple", "Senior AI/ML Research Engineer", "Mar 2023 – Present", "Cupertino, CA", [
-        "Led the **end-to-end model lifecycle**, from data to model development to production, and coached engineers",
-        "Delivered face recognition, identity security, and intelligence ML for IDs in Apple Wallet, Apple HomeView, and "
-        "Face Unlock on iPhone Duo, using face analysis and vision language models",
+        "Delivered face recognition, identity security, and intelligence ML for IDs in **Apple Wallet**, **Apple HomeView**, and "
+        "Face Unlock on **iPhone Duo**, using face analysis and vision language models",
+        "Led the end-to-end model lifecycle, from data to model development to production, and coached engineers",
         "Built **Safety AI**, including a selfie-based assurance system, to create a safe and trusted Apple ecosystem for kids",
     ]),
     ("Amazon Lab126", "Senior Applied Scientist", "Feb 2022 – Jan 2023", "Sunnyvale, CA", [
@@ -184,9 +184,10 @@ def header(canvas, doc):
                 canvas.setFillColor(MUTED)
                 canvas.drawString(x + gap, y, "·")
                 x += dot_w + 2 * gap
-            canvas.setFillColor(LINK)
+            canvas.setFillColor(LINK if url else MUTED)
             canvas.drawString(x, y, text)
-            canvas.linkURL(url, (x, y - 2, x + w, y + 9), relative=0)
+            if url:
+                canvas.linkURL(url, (x, y - 2, x + w, y + 9), relative=0)
             x += w
 
     y = top - 1.04 * inch
@@ -287,7 +288,7 @@ def build():
     )
     width = doc.width - 12  # SimpleDocTemplate frames carry 6pt padding per side
 
-    story = section("Summary") + [Paragraph(esc(line), S["summary"]) for line in SUMMARY]
+    story = section("Summary") + [Paragraph(esc(SUMMARY), S["summary"])]
     story += section("Experience")
     for org, role, d, where, b in EXPERIENCE:
         company, _, lab = org.partition(", ")

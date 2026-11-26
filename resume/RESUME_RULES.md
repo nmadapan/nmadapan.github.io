@@ -23,12 +23,12 @@ sips -s format png resume.pdf --out /tmp/resume.png               # macOS: rende
   - Teal `#0b7285`: structure (section headings, links, bullets, list numbers).
   - Copper `#b45f2a`: where and when (company/school names, dates, publication years, the short accent on the header rule).
   - Body text is dark neutral; locations and venues are gray.
-- **Header:** the name, then one contact row beneath it: the actual email `naveen.madapana@gmail.com` (`mailto:`) at the left, then Website, LinkedIn, GitHub, Scholar at the right. **No phone number** (the user removed it). Italic, in a slightly bluer teal (`#2a7ba6`) so they read as hyperlinks, **no underline**. The email sits at the left, the four profile links at the right, separated by gray dots. No title or employer block in the header.
+- **Header:** the name, then one contact row beneath it: the email shown only as the pattern `{firstname}.{lastname}@gmail.com` at the left (plain gray text, deliberately **not** a `mailto:` link, so the real address is not in the PDF), then Website, LinkedIn, GitHub, Scholar at the right. **No phone number** (the user removed it). Italic, in a slightly bluer teal (`#2a7ba6`) so they read as hyperlinks, **no underline**. The email sits at the left, the four profile links at the right, separated by gray dots. No title or employer block in the header.
 - Section headings are small letter-spaced teal capitals with a light hairline to the right margin.
 
 ## Content rules
 
-- **Summary:** three plain lines, no bullets. Each line fits on one line. It must not repeat anything from Experience, Education, or Publications (no product names, no employer names).
+- **Summary:** one flowing paragraph of about three sentences (no bullets). It must not repeat anything from Experience, Education, or Publications (no product names, no employer names).
 - **Skills & Technologies** (resume only, not on the website): placed after Education and before Publications. In the current two-page layout, page 1 ends with Education and page 2 holds Skills, Publications, and Hobbies. Five rows (Generative AI, Computer Vision, ML Engineering, Tools & Languages, Soft Skills), category labels in copper in a left column, skills in plain text on the right, each row one line. First draft; the user is reviewing and will revise.
 - **Hobbies:** last section, after Publications. Two rows in the same label/text format as Skills (Court sports: badminton, tennis, basketball; Running: 5K, 10K, half marathons). Also on the website as two cards before Contact.
 - **Experience / Education entries:**
@@ -36,7 +36,7 @@ sips -s format png resume.pdf --out /tmp/resume.png               # macOS: rende
   - A second line appears only when there is a lab or advisor (muted italic). Experience entries with no lab have no second line.
   - Bullets are teal; write them so each fills most of a line.
   - **Tense:** every bullet starts with a past-tense action verb ("Led", "Delivered", "Built", "Developed", "Worked as ...") for all roles, including the current one. Do not mix present and past.
-  - **Highlight very few things** (the user wants this on both the site and the resume): only end-to-end model lifecycle, Safety AI, generative AI (Amazon), Meta Quest, and zero-shot and one-shot recognition. Marked `**like this**` in `build_resume.py`. The website highlights those same five in the Experience timeline, plus generative AI, multimodal large language models, and 3D computer vision in the intro and Safety AI in its second paragraph. Do not add more.
+  - **Highlight very few things** (the user wants this on both the site and the resume): only Apple Wallet, Apple HomeView, iPhone Duo, Safety AI, generative AI (Amazon), Meta Quest, and zero-shot and one-shot recognition. The Apple "Led the end-to-end model lifecycle" bullet is no longer bold and sits second, after the "Delivered" bullet. Marked `**like this**` in `build_resume.py`. The website highlights those same five in the Experience timeline, plus generative AI, multimodal large language models, and 3D computer vision in the intro and Safety AI in its second paragraph. Do not add more.
 - **Education wording:** "Ph.D., Computer Vision and Machine Learning" (Purdue; no mention of Industrial Engineering). "Bachelors in Computer Science and Mechanical Engineering" (IIT Guwahati; no "minor"). No award text in the Ph.D. entry.
 - **Publications:** numbered, **one line each, no authors**. Title in serif, then the abbreviated venue in gray italic and the year in copper, right-aligned (WACV, IEEE THMS, IEEE FG, arXiv). Newest first. Currently eight papers (WACV 2021, IEEE THMS 2020, IEEE FG 2020, IEEE FG 2019, DESK arXiv 2019, ICPR 2018, ZSGL ICMI 2017, IEEE-RAS Humanoids 2015). Intentionally excluded: HFES 2020, HFES 2018, FG 2020 feature selection, and both PACS papers (IJMI 2019 and PLoS ONE 2018).
 - **No best student paper / HFES mention anywhere** (the user says that conference is not relevant). The website's HFES papers are still in its publication list but no longer carry an award badge.
@@ -56,4 +56,4 @@ The resume leaves out the website's Impact cards, Selected research cards, and h
 ## Open items
 
 - More bullets are planned for Amazon, Meta, KAIST, Purdue, and IIT Guwahati (and possibly Apple). Gather details from the user first, then add to both the website and the resume.
-- The user's email is public in the PDF by their choice; the phone number is intentionally left off.
+- The real email address is intentionally not in the PDF (pattern only), and the phone number is left off, so contact goes through LinkedIn.
