@@ -157,6 +157,24 @@ footer { border-top-color: var(--border); }
 .tabs-panel .btn.active { color: var(--text); background: var(--accent-soft); border-color: rgba(124,156,255,.6); font-weight: 600; }
 .tabs-panel .btn.active:hover { color: var(--text); }
 
+/* When a page tab is clicked and the page loads, the section strip unrolls down from the top bar and its tabs drop in */
+.subnav { animation: panelOpen .6s cubic-bezier(.22, 1, .36, 1) both; }
+.subnav .where, .tabs-panel .btn { animation: tabDrop .45s cubic-bezier(.22, 1, .36, 1) both; }
+.subnav .where { animation-delay: .2s; }
+.tabs-panel .btn:nth-child(1) { animation-delay: .28s; }
+.tabs-panel .btn:nth-child(2) { animation-delay: .35s; }
+.tabs-panel .btn:nth-child(3) { animation-delay: .42s; }
+.tabs-panel .btn:nth-child(4) { animation-delay: .49s; }
+@keyframes panelOpen {
+  from { clip-path: inset(0 0 100% 0); opacity: .3; transform: translateY(-12px); }
+  to { clip-path: inset(0 0 0 0); opacity: 1; transform: none; }
+}
+@keyframes tabDrop {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) { .subnav, .subnav .where, .tabs-panel .btn { animation: none; } }
+
 /* Resume page: the resume's pages shown directly, full width, so it reads without downloading */
 #resume .wrap { max-width: 1280px; }
 .resume-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 20px; }
