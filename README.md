@@ -26,18 +26,18 @@ resume/
 ## Website
 
 ### Pages and navigation
-- **Top bar (page tabs):** Home, Research, Blog, Resume (opens `resume.html`), Contact (goes to LinkedIn). The same `<nav>` block, `<head>`, and footer are copied into each HTML file, so a change to the nav has to be made in all four pages.
-- **Section tab panel** (under the top bar, Home and Research only): a sticky strip with the page name and small bordered tabs that jump to sections. `assets/js/site.js` marks the section you are in. Home: Impact, Education & Experience, Hobbies, Contact. Research: Selected research, Publications.
+- **Top bar (page tabs):** the title "Hello World, Welcome!" at the left (it links home), and Home, Research, Blog, Resume (opens `resume.html`), Contact (goes to LinkedIn) at the right. The tab for the page you are on is underlined with a short blue-to-cyan line. The same `<nav>` block, `<head>`, and footer are copied into each HTML file, so a change to the nav has to be made in all four pages.
+- **Section strip** (under the top bar, Home and Research only): a sticky strip with the page name (`HOME`, `RESEARCH`) and small bordered tabs that jump to sections. `assets/js/site.js` marks the section you are in. Home: Impact, Education & Experience, Hobbies, Contact. Research: Selected research, Publications. When a page loads, the strip unrolls down from the top bar and its tabs drop in one after another (CSS keyframes `panelOpen` and `tabDrop`; skipped when the visitor prefers reduced motion). Blog and Resume have no strip.
 - The Resume page shows each page of the resume as an image, 1280px wide at most, so it reads without downloading. Page images are not selectable text; the PDF is.
 
 ### Design
 - Dark theme with a soft purple/cyan background glow, frosted-glass cards, and a blue-to-cyan accent. Design tokens are the CSS variables at the top of `assets/css/site.css`. Later rules in the "Design overrides" section win over the base rules above them. Keep the `@media` blocks at the bottom of the file.
 - **Highlights:** keywords are marked `<strong class="kw">…</strong>` (a soft amber marker). Use very few. Currently: generative AI, multimodal large language models, 3D computer vision, and Safety AI in the intro, plus end-to-end model lifecycle, Safety AI, generative AI, Meta Quest, and zero-shot and one-shot recognition in the timeline.
-- **Cache busting:** the stylesheet link carries a version, `site.css?v=NN`. When you change the CSS, bump `NN` in all four pages, or browsers (Safari in particular) will show the old styles.
+- **Cache busting:** the stylesheet link carries a version, `site.css?v=NN`. When you change the CSS, bump `NN` in all four pages, or browsers (Safari in particular) will show the old styles. If you version `site.js` the same way (`site.js?v=N`), bump it too.
 
 ### Content style
 - Experience and education entries are bullet lists of short past-tense sentences. Fill the line width; avoid a single orphaned word on a wrapped line.
-- Do not put a phone number on the site. The email is not on the site either (LinkedIn is the contact path).
+- Do not put a phone number on the site or the resume. The real email address is not on the site, and the resume shows only the pattern `{firstname}.{lastname}@gmail.com` (LinkedIn is the contact path).
 - No Honors section, and no best-student-paper callouts.
 - Facts that came from the user and should be kept: Amazon work was talking avatars in Alexa video calling; Purdue TA for 3D computer vision and generative AI courses (100+ students); "suturing and needle threading", "deformable objects", "surgeons"; IIT Guwahati work was on the NAO humanoid (robotics, control systems, bipedal walking, object manipulation, static-gesture control); Apple bullets use "coaching" engineers.
 
@@ -64,7 +64,7 @@ Notes:
 - Check the render before committing: `sips -s format png resume.pdf --out /tmp/resume.png` shows page 1 on macOS.
 
 ### Design in one paragraph
-Navy name and titles (what you did), teal for structure and section headings, copper for organizations, dates, and years (where and when). The header is the name plus one line: the email pattern `{firstname}.{lastname}@gmail.com` (plain text, not a link) at the left, Website · LinkedIn · GitHub · Scholar at the right, in italics in a slightly bluer teal with no underline. Each role is `Role · Company` with dates and location at the far right. See `resume/RESUME_RULES.md` for the complete list of rules.
+Navy name and titles (what you did), teal for structure and section headings, copper for organizations, dates, and years (where and when). The header is the name plus one line: the email pattern `{firstname}.{lastname}@gmail.com` (plain text, not a link, and no phone number) at the left, Website · LinkedIn · GitHub · Scholar at the right, in italics in a slightly bluer teal with no underline. The summary is one flowing three-line paragraph, and Skills & Technologies has five rows (Generative AI, Computer Vision, ML Engineering, Tools & Languages, Soft Skills). Each role is `Role · Company` with dates and location at the far right. See `resume/RESUME_RULES.md` for the complete list of rules.
 
 ## Keeping the resume in sync
 
@@ -80,6 +80,8 @@ When you change the website, apply the matching change to the resume. The two ar
 | Impact cards, Selected research cards, highlighted keywords | Not on the resume. |
 | Skills & Technologies | Resume only. Edit `SKILLS` directly; there is no website equivalent. |
 
+Differences worth knowing: on the resume the Apple "Delivered face recognition…" bullet comes first and "Led the end-to-end model lifecycle…" second (the website lists them the other way round), and the resume's bold phrases differ from the website's highlights.
+
 Highlights: the resume bolds only a few phrases, marked `**like this**` in the data (Apple Wallet, Apple HomeView, iPhone Duo, Safety AI, generative AI, Meta Quest, zero-shot and one-shot recognition). Do not add more without being asked.
 
 ### Checklist after any website text change
@@ -92,3 +94,5 @@ Highlights: the resume bolds only a few phrases, marked `**like this**` in the d
 - KAIST and Apple were deliberately left as they are (the user said the rest can stay and Apple is good). If more bullets are added later, update both the website and the resume.
 - The Amazon bullets say "Alexa video calling" and "Delivered" because it was not confirmed that the work shipped on Echo Show. The intro paragraph and Impact card still say "GenAI capabilities on Amazon Echo Show".
 - The Blog page is an empty placeholder.
+- A custom domain (for example a `.ai` or `.dev` name) is being considered. If one is bought: add a `CNAME` file at the repo root containing the domain, set it under Settings → Pages with Enforce HTTPS, then update the Website link in `LINKS` in `build_resume.py` (and rebuild) and this README.
+- A larger redesign of the top panel (section tabs merged into the top bar as a second row, a pointer arrow, a centered title) was tried and reverted. It is saved only in a local git stash on the author's machine, not in the repo.
