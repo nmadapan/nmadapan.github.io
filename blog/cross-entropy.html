@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>Cross-Entropy: From Boltzmann to Backprop — Naveen Madapana</title>
+  <meta name="description" content="A short, illustrated and interactive guide to cross-entropy: randomness and entropy, the physics behind it, how it works as a loss, and the family of losses derived from it. Deeper material is one click away.">
+  <meta property="og:title" content="Cross-Entropy: From Boltzmann to Backprop">
+  <meta property="og:description" content="An illustrated, interactive guide to cross-entropy: randomness, physics, machine learning, and the losses derived from it.">
+  <link rel="stylesheet" href="../assets/css/site.css?v=27">
+  <link rel="stylesheet" href="../assets/css/post.css?v=6">
+</head>
+<body>
+
+<nav class="nav">
+  <div class="wrap">
+    <a class="brand" href="../index.html">Hello World, Welcome!</a>
+    <ul>
+      <li><a href="../index.html">Home</a></li>
+      <li><a href="../research.html">Research</a></li>
+      <li><a href="../blog.html" class="active">Blog</a></li>
+      <li><a href="../resume.html">Resume</a></li>
+      <li><a href="https://www.linkedin.com/in/nmadapan/" target="_blank" rel="noopener">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+<div class="subnav">
+  <div class="wrap">
+    <span class="where">In this post</span>
+    <div class="tabs-panel" role="navigation" aria-label="Sections of this post">
+      <a class="btn" href="#randomness">Randomness &amp; entropy</a>
+      <a class="btn" href="#physics">Physics</a>
+      <a class="btn" href="#cross">Cross-entropy</a>
+      <a class="btn" href="#ml">In machine learning</a>
+      <a class="btn" href="#family">Loss family</a>
+      <a class="btn" href="#why">Why it works</a>
+      <a class="btn" href="#practice">In practice</a>
+    </div>
+  </div>
+</div>
+
+<main id="top">
+  <article class="post">
+    <div class="wrap">
+      <p class="post-meta">Educational Blogs · November 27, 2026 · 9 min read · interactive</p>
+      <h1>Cross-Entropy: From Boltzmann to Backprop</h1>
+      <p class="lede">If you have trained a classifier, you have almost certainly minimized cross-entropy. Here is the whole idea in one sitting: each section gives an everyday analogy (the green boxes), the key math, and a figure you can play with. Panels marked <b>▸</b> hold the proofs, extra losses, and code, so you can open them only when you want more.</p>
+
+      <div class="callout">
+        <strong class="title">The whole post in five lines</strong>
+        <ul>
+          <li><b>Entropy</b> measures randomness: the log of the <i>effective number of equally likely outcomes</i>. An outcome of probability p carries −log p bits of information.</li>
+          <li><b>Cross-entropy</b> H(p, q) is the average information you need when reality follows p but you model it with q. It never drops below H(p); the extra is the <b>KL divergence</b>.</li>
+          <li>In physics these are Gibbs entropy, the Boltzmann distribution, and free energy. The <b>softmax</b> is a Boltzmann distribution.</li>
+          <li>Minimizing cross-entropy is <b>maximum likelihood</b>, and for a softmax the gradient is simply <b>q − p</b>: belief minus truth.</li>
+          <li>Log loss, BCE, KL, distillation, focal loss, contrastive losses, and perplexity are all cross-entropy with a twist.</li>
+        </ul>
+      </div>
+
+      <h2 id="randomness">1. Randomness, information, and entropy</h2>
+      <div class="callout plain">
+        <strong class="title">In plain English</strong>
+        <p>Randomness is about <b>how many possibilities there are</b>. A coin has 2 equally likely outcomes, a die has 6, a shuffled deck about 10<sup>68</sup>. <b>Entropy</b> is the logarithm of that count: a coin is 1 bit (one yes/no question settles it), a die is log<sub>2</sub> 6 = 2.58 bits. When outcomes are unequal, entropy counts the <i>effective</i> number of possibilities: a die that lands on 6 ninety percent of the time behaves like a die with only about 1.6 sides.</p>
+      </div>
+      <p>Start with one outcome. A good measure of the information it carries should be large for rare outcomes, zero for certain ones, and <i>additive</i> for independent ones. The only function that does this is the logarithm: an outcome of probability p carries</p>
+      <div class="eq">I(x) = −log p(x)</div>
+      <p>With log base 2 the unit is the <b>bit</b>; with the natural log it is the <b>nat</b> (1 nat ≈ 1.443 bits), which is what ML libraries use. <b>Entropy</b> is the average information over all outcomes:</p>
+      <div class="eq">H(p) = −Σ<sub>x</sub> p(x) log p(x) &nbsp;&nbsp;&nbsp; (and 2<sup>H</sup> is the effective number of outcomes)</div>
+
+      <figure class="viz">
+        <figcaption><b>Figure 1.</b> Information content of an outcome of probability p. A probability of 1/2 is worth 1 bit (one yes/no question), 1/8 is worth 3.</figcaption>
+        <canvas id="v-info" class="short"></canvas>
+        <div class="controls"><label>probability p <input type="range" id="s-info" min="0.01" max="1" step="0.01" value="0.25"></label></div>
+        <p class="read" id="r-info"></p>
+      </figure>
+      <figure class="viz">
+        <figcaption><b>Figure 2.</b> Entropy of a coin as its bias changes. It peaks at 1 bit for a fair coin (2 effective outcomes) and falls to 0 when the result is certain (1 outcome, nothing random).</figcaption>
+        <canvas id="v-coin" class="short"></canvas>
+        <div class="controls"><label>p(heads) <input type="range" id="s-coin" min="0" max="1" step="0.01" value="0.5"></label></div>
+        <p class="read" id="r-coin"></p>
+      </figure>
+
+      <p><b>Example.</b> A weather station reports one of four conditions with probabilities 1/2, 1/4, 1/8, 1/8. The ideal code gives each outcome −log<sub>2</sub> p bits, so common outcomes get short codes:</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Outcome</th><th class="num">p</th><th class="num">Information = ideal code length</th><th class="num">p × length</th></tr></thead>
+        <tbody>
+          <tr><td>Sunny</td><td class="num">0.5</td><td class="num">1 bit</td><td class="num">0.500</td></tr>
+          <tr><td>Cloudy</td><td class="num">0.25</td><td class="num">2 bits</td><td class="num">0.500</td></tr>
+          <tr><td>Rain</td><td class="num">0.125</td><td class="num">3 bits</td><td class="num">0.375</td></tr>
+          <tr><td>Snow</td><td class="num">0.125</td><td class="num">3 bits</td><td class="num">0.375</td></tr>
+          <tr><td><b>Entropy H(p)</b>, and 2<sup>H</sup> = 3.36 effective outcomes</td><td></td><td></td><td class="num"><b>1.75 bits</b></td></tr>
+        </tbody>
+      </table></div>
+      <p>A plain 2-bit code uses 2 bits every time; the optimal code averages 1.75. Hold on to that 0.25-bit gap.</p>
+
+      <h2 id="physics">2. Where it comes from: physics</h2>
+      <div class="callout plain">
+        <strong class="title">In plain English</strong>
+        <p>A brand-new sorted deck of cards has one arrangement: low entropy. A shuffled deck could be in any of 10<sup>68</sup>, and nothing you can see tells you which: high entropy. Physical entropy is "which arrangement is it, exactly?" that you are missing.</p>
+      </div>
+      <p>Boltzmann counted arrangements: W equally likely microstates give <b>S = k<sub>B</sub> ln W</b>. Gibbs generalized it to unequal probabilities, <b>S = −k<sub>B</sub> Σ p<sub>i</sub> ln p<sub>i</sub></b>, which is Shannon's entropy up to the constant k<sub>B</sub> and the log base. Among all distributions with a fixed average energy, the one with the highest entropy (the least biased guess) is the <b>Boltzmann distribution</b>:</p>
+      <div class="eq">p<sub>i</sub> = e<sup>−E<sub>i</sub>/k<sub>B</sub>T</sup> / Z</div>
+      <p>That is exactly a <b>softmax</b> over negative energies. The softmax in your network is a Boltzmann distribution, with logits as −E/k<sub>B</sub>T and a temperature that works the same way (Figure 6, in the extras below, lets you turn it).</p>
+      <div class="callout plain">
+        <strong class="title">In plain English</strong>
+        <p>Equilibrium is the bottom of a bowl. A system that has not settled is a marble partway up the side. The <b>KL divergence</b> to the equilibrium distribution measures how high up the bowl it sits, in units of thermal energy, so it is an <b>excess free energy</b>: KL(q ‖ p) = (F[q] − F<sub>eq</sub>)/k<sub>B</sub>T ≥ 0. Minimizing a KL divergence in variational inference is minimizing a free energy.</p>
+      </div>
+
+      <details class="deep" id="counting">
+        <summary>From W to entropy: counting arrangements, step by step (two figures, and more detail inside)</summary>
+        <p><b>1. What W is.</b> Many detailed arrangements (microstates) share one big picture (macrostate). W, the <b>multiplicity</b>, counts them. For 4 coins, with "number of heads" as the big picture:</p>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Big picture</th><th>Arrangements</th><th class="num">W</th><th class="num">Chance (W / 16)</th></tr></thead>
+          <tbody>
+            <tr><td>0 heads</td><td>TTTT</td><td class="num">1</td><td class="num">6%</td></tr>
+            <tr><td>1 head</td><td>HTTT, THTT, TTHT, TTTH</td><td class="num">4</td><td class="num">25%</td></tr>
+            <tr><td>2 heads</td><td>HHTT, HTHT, HTTH, THHT, THTH, TTHH</td><td class="num">6</td><td class="num">38%</td></tr>
+            <tr><td>3 heads</td><td>HHHT, HHTH, HTHH, THHH</td><td class="num">4</td><td class="num">25%</td></tr>
+            <tr><td>4 heads</td><td>HHHH</td><td class="num">1</td><td class="num">6%</td></tr>
+          </tbody>
+        </table></div>
+        <p><b>2. How W and entropy are related.</b> The entropy of a big picture is <b>log W</b> (Boltzmann's S = k ln W). More arrangements means more ways the system could be, so more uncertainty about which one it is. The log is there because independent systems multiply their counts (6 × 6 = 36) while uncertainty should add (log 36 = log 6 + log 6).</p>
+        <p><b>3. From W to −Σ p log p.</b> For N items with n<sub>1</sub>, n<sub>2</sub>, … in each category, W = N! / (n<sub>1</sub>! n<sub>2</sub>! …). Replacing each ln m! with m ln m − m, then writing n<sub>i</sub> = N p<sub>i</sub>, gives</p>
+        <div class="eq">(ln W) / N ≈ −Σ p<sub>i</sub> ln p<sub>i</sub> = H</div>
+        <p>So <b>entropy per item is log W per item</b>, once there are many items. For fractions (0.5, 0.3, 0.2) the formula gives 1.4855 bits per item, and the exact count (log<sub>2</sub> W)/N is 1.130 at N = 10, 1.418 at N = 100, 1.475 at N = 1,000, 1.484 at N = 10,000.</p>
+        <details class="deep">
+          <summary>Step 3 in detail: the algebra, line by line</summary>
+          <p>Take the log of W: ln W = ln N! − ln n<sub>1</sub>! − ln n<sub>2</sub>! − …</p>
+          <p>Replace every ln m! with m ln m − m: ln W ≈ (N ln N − N) − Σ (n<sub>i</sub> ln n<sub>i</sub> − n<sub>i</sub>). The −N and the +Σ n<sub>i</sub> cancel, because the counts add up to N, leaving ln W ≈ N ln N − Σ n<sub>i</sub> ln n<sub>i</sub>.</p>
+          <p>Write each count as a fraction, n<sub>i</sub> = N p<sub>i</sub>: Σ n<sub>i</sub> ln n<sub>i</sub> = Σ N p<sub>i</sub> (ln N + ln p<sub>i</sub>) = N ln N · Σ p<sub>i</sub> + N Σ p<sub>i</sub> ln p<sub>i</sub> = N ln N + N Σ p<sub>i</sub> ln p<sub>i</sub>, since the fractions add to 1.</p>
+          <p>Subtract: ln W ≈ N ln N − N ln N − N Σ p<sub>i</sub> ln p<sub>i</sub> = −N Σ p<sub>i</sub> ln p<sub>i</sub>. Divide by N.</p>
+        </details>
+        <details class="deep">
+          <summary>Step 3 in detail: why ln m! ≈ m ln m − m (with a picture)</summary>
+          <p>A factorial is 1 × 2 × … × m, so ln m! = ln 1 + ln 2 + … + ln m: a staircase of bars. The smooth curve ln x runs through the tops of the bars, so the area under it is nearly the same as the staircase, and that area is m ln m − m + 1.</p>
+          <figure class="viz">
+            <figcaption><b>Figure A.</b> The bars add up to ln(m!). The area under the amber curve is a close stand-in; the gap grows slowly but shrinks as a share of the total.</figcaption>
+            <canvas id="v-stirling" class="short"></canvas>
+            <div class="controls"><label>m <input type="range" id="s-stirling" min="2" max="40" step="1" value="8"><output id="l-stirling"></output></label></div>
+            <p class="read" id="r-stirling"></p>
+          </figure>
+        </details>
+        <details class="deep">
+          <summary>Step 3 in detail: how good is the approximation? (m = 1 to 15)</summary>
+          <p>The two are <b>not equal</b>. The absolute gap keeps growing, about ½ ln(2πm), but slowly. Adding that term (last column) makes it accurate to a hundredth by m = 4.</p>
+          <div class="table-wrap"><table>
+            <thead><tr><th class="num">m</th><th class="num">ln m!</th><th class="num">m ln m − m</th><th class="num">gap</th><th class="num">gap after adding ½ ln(2πm)</th></tr></thead>
+            <tbody><tr><td class="num">1</td><td class="num">0.000</td><td class="num">-1.000</td><td class="num">1.000</td><td class="num">0.081</td></tr><tr><td class="num">2</td><td class="num">0.693</td><td class="num">-0.614</td><td class="num">1.307</td><td class="num">0.041</td></tr><tr><td class="num">3</td><td class="num">1.792</td><td class="num">0.296</td><td class="num">1.496</td><td class="num">0.028</td></tr><tr><td class="num">4</td><td class="num">3.178</td><td class="num">1.545</td><td class="num">1.633</td><td class="num">0.021</td></tr><tr><td class="num">5</td><td class="num">4.787</td><td class="num">3.047</td><td class="num">1.740</td><td class="num">0.017</td></tr><tr><td class="num">6</td><td class="num">6.579</td><td class="num">4.751</td><td class="num">1.829</td><td class="num">0.014</td></tr><tr><td class="num">7</td><td class="num">8.525</td><td class="num">6.621</td><td class="num">1.904</td><td class="num">0.012</td></tr><tr><td class="num">8</td><td class="num">10.605</td><td class="num">8.636</td><td class="num">1.969</td><td class="num">0.010</td></tr><tr><td class="num">9</td><td class="num">12.802</td><td class="num">10.775</td><td class="num">2.027</td><td class="num">0.009</td></tr><tr><td class="num">10</td><td class="num">15.104</td><td class="num">13.026</td><td class="num">2.079</td><td class="num">0.008</td></tr><tr><td class="num">11</td><td class="num">17.502</td><td class="num">15.377</td><td class="num">2.125</td><td class="num">0.008</td></tr><tr><td class="num">12</td><td class="num">19.987</td><td class="num">17.819</td><td class="num">2.168</td><td class="num">0.007</td></tr><tr><td class="num">13</td><td class="num">22.552</td><td class="num">20.344</td><td class="num">2.208</td><td class="num">0.006</td></tr><tr><td class="num">14</td><td class="num">25.191</td><td class="num">22.947</td><td class="num">2.244</td><td class="num">0.006</td></tr><tr><td class="num">15</td><td class="num">27.899</td><td class="num">25.621</td><td class="num">2.279</td><td class="num">0.006</td></tr></tbody>
+          </table></div>
+          <p>Why a growing gap still works: entropy divides by N, so the leftover gap per item is about ln(2πN·p·q) / 2N, which goes to zero. For the 75/25 coin, (log<sub>2</sub> W)/N is 0.7415 at N = 40, 0.8002 at N = 400, 0.8098 at N = 4,000, and 0.8111 at N = 40,000, against the formula's 0.8113.</p>
+        </details>
+        <p><b>4. One row versus the whole system.</b> W belongs to a single row, so on its own it does not describe the system. The whole picture has two layers: <i>which row</i> the system is in (chance W / total), and <i>which arrangement inside the row</i> (log W bits of uncertainty). With many items, almost everything sits in the rows near the busiest one, so that row's log W per item is the whole system's.</p>
+        <figure class="viz">
+          <figcaption><b>Figure B.</b> Top: the chance of each row for N flips. Bottom: log<sub>2</sub>(W) per flip for each row, plotted against the fraction of heads. The dots trace the entropy curve from Figure 2.</figcaption>
+          <canvas id="v-rows" class="short"></canvas>
+          <canvas id="v-rows-h" class="short"></canvas>
+          <div class="controls"><label>flips N <input type="range" id="s-rows" min="4" max="400" step="2" value="40"><output id="l-rows"></output></label></div>
+          <p class="read" id="r-rows"></p>
+        </figure>
+        <p>The two quantities take different inputs. <b>log W</b> uses the fractions seen in a chosen row. <b>−Σ p log p</b> uses the source's true probabilities, so it already describes the whole system. They give the same number per item for the row that matches the true probabilities, which is the row the system actually sits in.</p>
+        <details class="deep">
+          <summary>Step 4 in detail: the numbers for 400 flips, and what happens with a wrong row</summary>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Source</th><th>Row</th><th class="num">log<sub>2</sub> W</th><th class="num">N · H</th><th class="num">Gap</th></tr></thead>
+            <tbody>
+              <tr><td>fair coin</td><td>200 heads</td><td class="num">395.4</td><td class="num">400.0</td><td class="num">4.6</td></tr>
+              <tr><td>coin with p(heads) = 0.75</td><td>300 heads</td><td class="num">320.1</td><td class="num">324.5</td><td class="num">4.4</td></tr>
+            </tbody>
+          </table></div>
+          <p>The gap of about 5 bits is the uncertainty about <i>which row</i> (it grows like ½ log<sub>2</sub> N, so per flip it shrinks to zero). The 0.75 coin shows why the entropy is not "log of the total number of sequences" (400 bits): its sequences are not equally likely, so only the <i>typical</i> ones, in the row that matches the coin, count.</p>
+          <p><b>A wrong row.</b> For a fair coin, the row with 100 heads in 400 flips has its own entropy (0.80 bits per flip), but its chance is W / 2<sup>400</sup>, and log<sub>2</sub> of that is 320.1 − 400 = −79.9, so about 2<sup>−80</sup>, roughly one in a trillion trillion. A fair coin never lands there, so that row says nothing about it. If you did see 25% heads, you would conclude the coin is biased.</p>
+        </details>
+        <details class="deep">
+          <summary>Step 4 in detail: how to get W from observed data (300 heads in 400 flips)</summary>
+          <p>You need only N and the observed counts. W = 400! / (300! · 100!). In logs, log<sub>2</sub> 400! = 2886.1, log<sub>2</sub> 300! = 2041.3, log<sub>2</sub> 100! = 524.8, so log<sub>2</sub> W = 2886.1 − 2041.3 − 524.8 = 320.1 bits, or about 10<sup>96</sup> sequences. Per flip that is 0.800, against the formula's 0.811 for fractions (0.75, 0.25). This assumes the flips are independent heads-or-tails; in physics W comes from a model of the possible microscopic configurations.</p>
+        </details>
+        <p><b>5. Reading −Σ p log p.</b> <b>p</b> is how often an outcome happens. <b>−log p</b> is the information it carries, in bits (log p itself is negative). <b>p · (−log p)</b> weights that information by how often it occurs, and <b>Σ</b> adds them up: entropy is the <b>weighted average information</b> per outcome. The weather example: 0.5·1 + 0.25·2 + 0.125·3 + 0.125·3 = 1.75 bits.</p>
+        <details class="deep">
+          <summary>Step 5 in detail: why does a rare outcome carry a lot of information?</summary>
+          <p>Because it narrows things down a lot. Five ways to see it:</p>
+          <ul>
+            <li><b>20 Questions.</b> One of 2 things takes 1 question, one of 8 takes 3, one of 1,000 about 10, one of 1,000,000 about 20. A rare outcome is one among many, so naming it takes many questions' worth of information.</li>
+            <li><b>News.</b> "The sun rose" tells you nothing new; "a meteor hit the town" changes your picture of the day.</li>
+            <li><b>Belief update.</b> You gave it probability p and it happened, so your belief rose by a factor 1/p. Information is the log of that factor, −log p. A 1-in-1,000 event multiplies your belief 1,000 times, about 10 doublings, so 10 bits.</li>
+            <li><b>Code length.</b> Frequent events get short codes and rare ones long codes: in Morse, E is one dot and Q is a long string.</li>
+            <li><b>Additivity.</b> Two independent 1-in-1,000 events together are a 1-in-1,000,000 event, and 10 bits + 10 bits = 20 bits, which only the log gives.</li>
+          </ul>
+          <p>A rare event carries many bits each time it happens, but it seldom happens, so in the average its large information gets a tiny weight. Contribution p · (−log<sub>2</sub> p): 0.066 at p = 0.01, 0.332 at 0.1, 0.5 at 0.25, 0.5 at 0.5, 0.137 at 0.9. The biggest share, 0.53, is at p ≈ 0.37.</p>
+        </details>
+      </details>
+
+      <h2 id="cross">3. Cross-entropy: modeling randomness with the wrong distribution</h2>
+      <div class="callout plain">
+        <strong class="title">In plain English</strong>
+        <p>Morse code gave short codes to common English letters (E is one dot). Use that codebook for Finnish, whose letters are used at different rates, and every message comes out longer than necessary. <b>Cross-entropy</b> is the average message length with the wrong codebook; <b>entropy</b> is the length with the perfect one; their difference is the <b>KL divergence</b>.</p>
+      </div>
+      <p>You build a code from beliefs q, but outcomes arrive at the true rate p. Each outcome costs −log q(x) bits, so the average cost is</p>
+      <div class="eq">H(p, q) = −Σ<sub>x</sub> p(x) log q(x) = H(p) + KL(p ‖ q),&nbsp;&nbsp; KL(p ‖ q) = Σ p log(p/q) ≥ 0<span class="cap">KL is zero only when q = p</span></div>
+      <p><b>Numbers.</b> For the weather station, p = (½, ¼, ⅛, ⅛) with H(p) = 1.75 bits:</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Belief q</th><th class="num">H(p, q)</th><th class="num">KL(p ‖ q)</th><th class="num">KL(q ‖ p)</th></tr></thead>
+        <tbody>
+          <tr><td>(½, ¼, ⅛, ⅛), the truth</td><td class="num">1.750</td><td class="num">0</td><td class="num">0</td></tr>
+          <tr><td>(¼, ¼, ¼, ¼), uniform</td><td class="num">2.000</td><td class="num">0.250</td><td class="num">0.250</td></tr>
+          <tr><td>(0.7, 0.1, 0.1, 0.1)</td><td class="num">1.918</td><td class="num">0.168</td><td class="num">0.143</td></tr>
+        </tbody>
+      </table></div>
+      <p>Believing uniform costs the 0.25-bit gap from Section 1. Note the last row: KL(p ‖ q) ≠ KL(q ‖ p), so KL is a divergence, not a distance. Try it with a coin:</p>
+      <figure class="viz">
+        <figcaption><b>Figure 3.</b> Cross-entropy of a coin whose true bias is p, as a function of the model's belief q. The green dashed line is the floor H(p); the amber bar is the KL penalty. Push q toward 0 or 1 while p is in the middle: wrong <i>and</i> confident is very expensive.</figcaption>
+        <canvas id="v-bern"></canvas>
+        <div class="controls">
+          <label>true p <input type="range" id="s-bern-p" min="0.02" max="0.98" step="0.01" value="0.7"></label>
+          <label>model q <input type="range" id="s-bern-q" min="0.02" max="0.98" step="0.01" value="0.3"></label>
+        </div>
+        <p class="read" id="r-bern"></p>
+      </figure>
+      <details class="deep">
+        <summary>Proofs: KL ≥ 0, the free-energy identity, and Landauer's principle</summary>
+        <p><b>KL ≥ 0.</b> Since −log is convex, Jensen's inequality gives Σ p·(−log(q/p)) ≥ −log Σ p·(q/p) = −log 1 = 0, with equality only if q/p is constant, which forces q = p.</p>
+        <p><b>Free energy.</b> With p<sub>i</sub> = e<sup>−βE<sub>i</sub></sup>/Z, −ln p<sub>i</sub> = βE<sub>i</sub> + ln Z, so H(q, p) = β⟨E⟩<sub>q</sub> + ln Z. Subtracting H(q) = S[q]/k<sub>B</sub> gives KL(q ‖ p) = β(⟨E⟩ − TS[q]) + ln Z = β(F[q] − F<sub>eq</sub>), using F<sub>eq</sub> = −k<sub>B</sub>T ln Z. For a two-level system with energies 0 and ε at k<sub>B</sub>T = ε, Z = 1.368 and the probabilities are 0.731 and 0.269.</p>
+        <p><b>Landauer.</b> Erasing one bit must dissipate at least k<sub>B</sub> T ln 2 of heat (about 3 × 10<sup>−21</sup> J at room temperature): information is physical.</p>
+      </details>
+
+      <h2 id="ml">4. From coding to learning</h2>
+      <div class="callout plain">
+        <strong class="title">In plain English</strong>
+        <p>A <b>quiz show</b> asks you to spread 100% of your confidence over the possible answers, then charges you according to how little you put on the right one: a little at 90%, more at 50%, an enormous amount at 1%. That is the cross-entropy loss. Hedging costs a little; being confidently wrong costs a lot.</p>
+      </div>
+      <p>A classifier outputs a distribution q<sub>θ</sub>(y | x). The label is the true distribution p, a one-hot vector, so the loss collapses to the log-probability of the right class:</p>
+      <div class="eq">L(θ) = H(p, q<sub>θ</sub>) = −Σ<sub>k</sub> p<sub>k</sub> log q<sub>k</sub> = −log q<sub>θ</sub>(y | x)</div>
+      <p>This is the <b>negative log-likelihood</b>. Averaged over a dataset, minimizing it is <b>maximum likelihood</b>: pick the parameters that make the training data as probable as possible. (Using KL instead changes nothing, since H(p) is a constant.)</p>
+      <p>The model produces scores (logits) z, and the <b>softmax</b> turns them into probabilities, q<sub>k</sub> = e<sup>z<sub>k</sub></sup>/Σ<sub>j</sub> e<sup>z<sub>j</sub></sup>. Think of it as "market shares": big scores take a disproportionate share. The gradient of the loss with respect to a logit is</p>
+      <div class="eq">∂L / ∂z<sub>k</sub> = q<sub>k</sub> − p<sub>k</sub><span class="cap">belief minus truth</span></div>
+      <div class="callout plain">
+        <strong class="title">In plain English</strong>
+        <p>A good coach says <i>how</i> wrong and in which direction: "you were 66% sure it was a cat and it was, so push up by 34 points; you gave dog 24%, push that down 24." The gradient is exactly that.</p>
+      </div>
+
+      <figure class="viz">
+        <figcaption><b>Figure 4.</b> A three-class model. Blue bars are the softmax output, amber outlines the target. Move the logits, or press the button and watch gradient descent pull q toward the target. With a one-hot target the loss approaches zero but never reaches it.</figcaption>
+        <canvas id="v-three" class="tall"></canvas>
+        <div class="controls">
+          <label>z<sub>cat</sub> <input type="range" id="s-z0" min="-4" max="4" step="0.1" value="2"><output id="l-z0"></output></label>
+          <label>z<sub>dog</sub> <input type="range" id="s-z1" min="-4" max="4" step="0.1" value="1"><output id="l-z1"></output></label>
+          <label>z<sub>bird</sub> <input type="range" id="s-z2" min="-4" max="4" step="0.1" value="0.1"><output id="l-z2"></output></label>
+        </div>
+        <div class="controls">
+          <label><input type="radio" name="three-target" value="soft" checked> soft target (0.7, 0.2, 0.1)</label>
+          <label><input type="radio" name="three-target" value="hard"> one-hot target (1, 0, 0)</label>
+          <button class="primary" id="b-three-run" type="button">Run gradient descent</button>
+          <button id="b-three-reset" type="button">Reset</button>
+        </div>
+        <p class="read" id="r-three"></p>
+        <canvas id="v-three-loss" class="short"></canvas>
+      </figure>
+
+      <p><b>Worked example.</b> Logits z = (2.0, 1.0, 0.1) give e<sup>z</sup> = (7.389, 2.718, 1.105), sum 11.212, so q = (0.659, 0.242, 0.099):</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>True class</th><th class="num">q for the truth</th><th class="num">Loss = −ln q</th><th class="num">Gradient q − p</th></tr></thead>
+        <tbody>
+          <tr><td>cat</td><td class="num">0.659</td><td class="num">0.417</td><td class="num">(−0.341, +0.242, +0.099)</td></tr>
+          <tr><td>dog</td><td class="num">0.242</td><td class="num">1.417</td><td class="num">(+0.659, −0.758, +0.099)</td></tr>
+          <tr><td>bird</td><td class="num">0.099</td><td class="num">2.317</td><td class="num">(+0.659, +0.242, −0.901)</td></tr>
+        </tbody>
+      </table></div>
+      <p>The more wrong the prediction, the larger the loss. With the soft target (0.7, 0.2, 0.1) the loss is 0.807 nats, of which H(p) = 0.802 is irreducible and only KL = 0.005 is fixable.</p>
+      <details class="deep">
+        <summary>Derivation of ∂L/∂z = q − p, and how to read the loss number</summary>
+        <p><b>Derivation.</b> L = −Σ p<sub>k</sub> ln q<sub>k</sub> = −Σ p<sub>k</sub> z<sub>k</sub> + ln Σ<sub>j</sub> e<sup>z<sub>j</sub></sup> (using Σ p<sub>k</sub> = 1). Differentiating with respect to z<sub>m</sub> gives −p<sub>m</sub> + e<sup>z<sub>m</sub></sup>/Σ<sub>j</sub> e<sup>z<sub>j</sub></sup> = q<sub>m</sub> − p<sub>m</sub>. The log-sum-exp term is convex, so the loss is convex in the logits.</p>
+        <p><b>Perplexity.</b> exp(average loss) is the effective number of choices the model feels it is making. An average of 3.0 nats per token gives e<sup>3.0</sup> = 20.1, as unsure as choosing uniformly among about 20 tokens (4.33 bits per token). Lower is better.</p>
+        <p><b>Sequences.</b> A sentence's log-probability is the sum of its token log-probabilities, so language-model training is this loss at every position.</p>
+        <p><b>Accuracy.</b> In bits, the loss upper-bounds the error: a wrong top-1 prediction means q for the truth is at most 0.5, so the loss is at least 1 bit. But cross-entropy also rewards <i>how much</i> probability you gave the truth, so it keeps improving after accuracy plateaus.</p>
+        <p><b>Regression is cross-entropy too.</b> Squared error is the negative log-likelihood under Gaussian noise (−ln N(y; μ, σ²) = (y − μ)²/2σ² + const); absolute error is the same under Laplace noise. Choosing a loss is choosing the noise you believe in.</p>
+      </details>
+
+      <h2 id="family">5. The family of losses derived from cross-entropy</h2>
+      <p>The pattern is "average information under a target, measured with the model's beliefs". These are the ones you will meet most:</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Loss</th><th>Formula</th><th>Plain-English idea, and where you meet it</th></tr></thead>
+        <tbody>
+          <tr><td>Negative log-likelihood, categorical cross-entropy</td><td class="f">−Σ<sub>k</sub> p<sub>k</sub> log q<sub>k</sub></td><td>The quiz-show penalty. How improbable the model thought what really happened was.</td></tr>
+          <tr><td>Binary cross-entropy</td><td class="f">−[ y log ŷ + (1−y) log(1−ŷ) ]</td><td>The yes/no version; also multi-label tasks, one yes/no question per label.</td></tr>
+          <tr><td>KL divergence</td><td class="f">Σ p log(p/q) = H(p, q) − H(p)</td><td>Only the extra uncertainty from using q instead of p. Soft targets, distillation, VAEs.</td></tr>
+          <tr><td>Label smoothing</td><td class="f">H( (1−ε)·onehot + ε/K, q )</td><td>A dose of humility: never be 100% sure.</td></tr>
+          <tr><td>Focal loss</td><td class="f">−(1 − p<sub>t</sub>)<sup>γ</sup> log p<sub>t</sub></td><td>Stop grading easy homework; focus on hard questions. Object detection.</td></tr>
+          <tr><td>Distillation</td><td class="f">T² · KL( softmax(z<sub>t</sub>/T) ‖ softmax(z<sub>s</sub>/T) )</td><td>Learn from the teacher's hesitation, not just its final answer.</td></tr>
+          <tr><td>InfoNCE (contrastive)</td><td class="f">−log [ e<sup>s(x,x⁺)</sup> / Σ<sub>j</sub> e<sup>s(x,x<sub>j</sub>)</sup> ]</td><td>Pick the true partner out of a lineup. CLIP, SimCLR.</td></tr>
+        </tbody>
+      </table></div>
+
+      <h3>KL is asymmetric, and that changes what you learn</h3>
+      <div class="callout plain">
+        <strong class="title">In plain English</strong>
+        <p>One guard watches a building with two doors. <b>Forward KL(p ‖ q)</b> fires the guard if any door goes unwatched, so the guard stands in the middle and covers <i>both</i> (blurrily). <b>Reverse KL(q ‖ p)</b> fires the guard for standing where there is no door, so the guard picks <i>one</i> door and watches it precisely. Cross-entropy training is the forward kind; variational inference is the reverse kind.</p>
+      </div>
+      <figure class="viz">
+        <figcaption><b>Figure 5.</b> Fit one Gaussian (blue) to a two-bump distribution (amber). The forward-KL fit straddles both bumps (μ ≈ 0, σ ≈ 2.1, KL = 0.42 nats); the reverse-KL fit locks onto one (μ = ±2, σ = 0.7, KL = ln 2 = 0.69 nats).</figcaption>
+        <canvas id="v-kl"></canvas>
+        <div class="controls">
+          <label>mean μ <input type="range" id="s-kl-mu" min="-4" max="4" step="0.05" value="1"><output id="l-kl-mu"></output></label>
+          <label>spread σ <input type="range" id="s-kl-sd" min="0.3" max="4" step="0.05" value="1"><output id="l-kl-sd"></output></label>
+          <button class="primary" id="b-kl-fwd" type="button">Fit forward KL(p‖q)</button>
+          <button id="b-kl-rev" type="button">Fit reverse KL(q‖p)</button>
+        </div>
+        <p class="read" id="r-kl"></p>
+      </figure>
+
+      <details class="deep">
+        <summary>More losses, plus the details on BCE, label smoothing, temperature, and focal loss (with two more figures)</summary>
+        <h3>The rest of the family</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Loss</th><th>Formula</th><th>Idea</th></tr></thead>
+          <tbody>
+            <tr><td>Reverse KL</td><td class="f">KL(q ‖ p) = Σ q log(q/p)</td><td>Judged by the model's own beliefs: punishes making things up, so it commits to one mode.</td></tr>
+            <tr><td>Weighted cross-entropy</td><td class="f">−Σ w<sub>k</sub> p<sub>k</sub> log q<sub>k</sub></td><td>Mistakes on rare classes count more.</td></tr>
+            <tr><td>Jensen–Shannon</td><td class="f">½KL(p‖m) + ½KL(q‖m), m = (p+q)/2</td><td>A fair, symmetric cousin of KL, at most ln 2. The original GAN objective equals 2·JS − log 4 at the optimal discriminator.</td></tr>
+            <tr><td>Mutual information</td><td class="f">KL( p(x, y) ‖ p(x) p(y) )</td><td>How much knowing one variable cuts the uncertainty about the other.</td></tr>
+            <tr><td>Perplexity</td><td class="f">exp( H(p, q) )</td><td>The effective number of choices the model feels it has.</td></tr>
+            <tr><td>Entropy regularization</td><td class="f">L − β H(q)</td><td>Reward open-mindedness so the model keeps exploring (maximum-entropy RL, SAC).</td></tr>
+          </tbody>
+        </table></div>
+        <p><b>Others you might be missing:</b> the wider f-divergence family (Rényi, Hellinger, total variation, χ²); the Brier score (squared error on probabilities, also a proper scoring rule but gentler on confident mistakes); CTC (negative log-likelihood summed over alignments); ordinal and hierarchical losses; Wasserstein distance (not derived from cross-entropy; it respects distances between outcomes); and the cross-entropy <i>method</i>, a sampling-based optimizer that repeatedly fits a distribution to the best samples.</p>
+
+        <h3>Binary cross-entropy by hand</h3>
+        <p>Labels y = (1, 0, 1, 1), predictions ŷ = (0.9, 0.2, 0.6, 0.1) give losses −ln 0.9 = 0.105, −ln 0.8 = 0.223, −ln 0.6 = 0.511, −ln 0.1 = 2.303, for a mean of <b>0.785</b>. The one confident mistake costs almost three times as much as the other three together.</p>
+
+        <h3>Label smoothing, temperature, and distillation</h3>
+        <p>Label smoothing (ε = 0.1, K = 3) turns the "cat" target into (0.933, 0.033, 0.033); the loss for our logits becomes 0.514 instead of 0.417. A temperature T flattens the softmax: our output (0.659, 0.242, 0.099) at T = 1 becomes (0.445, 0.319, 0.236) at T = 3, which exposes how the teacher sees the wrong classes ("dark knowledge"). Gradients shrink by 1/T², so the distillation loss is multiplied by T².</p>
+        <figure class="viz">
+          <figcaption><b>Figure 6.</b> Blue: the softmax of the logits (2.0, 1.0, 0.1) at temperature T. Amber: the label-smoothed "cat" target at smoothing ε. Higher T raises the entropy toward ln 3 = 1.099.</figcaption>
+          <canvas id="v-temp"></canvas>
+          <div class="controls">
+            <label>temperature T <input type="range" id="s-temp" min="0.3" max="6" step="0.1" value="1"><output id="l-temp"></output></label>
+            <label>smoothing ε <input type="range" id="s-smooth" min="0" max="0.5" step="0.01" value="0.1"><output id="l-smooth"></output></label>
+          </div>
+          <p class="read" id="r-temp"></p>
+        </figure>
+
+        <h3>Focal loss</h3>
+        <p>Thousands of easy examples can drown the few hard ones. Focal loss multiplies the cross-entropy by (1 − p<sub>t</sub>)<sup>γ</sup>. At γ = 2, a correct prediction at p<sub>t</sub> = 0.9 has its loss cut 100× (0.105 → 0.001), while one at p<sub>t</sub> = 0.1 is cut only 19% (2.30 → 1.87).</p>
+        <figure class="viz">
+          <figcaption><b>Figure 7.</b> Focal loss for γ = 0 (plain cross-entropy), 1, 2, and 5.</figcaption>
+          <canvas id="v-focal" class="short"></canvas>
+        </figure>
+      </details>
+
+      <h2 id="why">6. Why cross-entropy is such a good loss</h2>
+      <ol>
+        <li><b>It is maximum likelihood</b>: the natural way to ask a model for a probability, and statistically efficient.</li>
+        <li><b>It is a strictly proper scoring rule</b>: the expected loss is lowest only when you report the true probabilities, so it rewards honesty (a forecaster paid for calibration).</li>
+        <li><b>Its gradient does not die</b>: q − p stays large when the model is confidently wrong.</li>
+        <li><b>It is convex in the logits</b>, decomposes over examples and tokens, and has units (bits, perplexity) you can interpret.</li>
+      </ol>
+      <div class="callout plain">
+        <strong class="title">In plain English</strong>
+        <p>Cross-entropy is a <b>smoke alarm that gets louder the worse the fire</b>. Squared error on a sigmoid goes <i>quiet</i> when the room is thickest with smoke, because its gradient is multiplied by something that shrinks to zero when the unit is saturated. Figure 8 shows it: a unit that starts confidently wrong (z = −5) gets a gradient of ≈ −1 from cross-entropy but only −0.013 from squared error, 75× weaker.</p>
+      </div>
+      <figure class="viz">
+        <figcaption><b>Figure 8.</b> Top: the two losses against the predicted probability. Middle: how hard each loss pushes the logit. Bottom: a unit that starts confidently wrong, trained with the same learning rate for both. Cross-entropy recovers in a few steps; squared error sits stuck for about 80 steps.</figcaption>
+        <canvas id="v-bce-loss" class="short"></canvas>
+        <canvas id="v-bce-grad" class="short"></canvas>
+        <canvas id="v-bce-train" class="short"></canvas>
+        <div class="controls"><button class="primary" id="b-bce-train" type="button">Train from z = −5</button></div>
+      </figure>
+      <div class="callout warn">
+        <strong class="title">Where it can bite</strong>
+        <ul>
+          <li><b>Over-confidence</b> (it keeps rewarding probabilities closer to 1): use label smoothing or temperature scaling.</li>
+          <li><b>Noisy labels and imbalance</b>: a wrong label with a confident prediction costs a lot, and majority classes dominate the sum: use robust losses, class weights, or focal loss.</li>
+          <li><b>No notion of distance</b>: confusing "cat" with "dog" costs the same as "cat" with "truck".</li>
+        </ul>
+      </div>
+
+      <h2 id="practice">7. In practice</h2>
+      <details class="deep">
+        <summary>PyTorch snippet, a short checklist, and further reading</summary>
+        <p>The worked example from Section 4, by hand and with the library. Both give 0.4170.</p>
+<pre><code>import torch
+import torch.nn.functional as F
+
+z = torch.tensor([[2.0, 1.0, 0.1]])    # logits: shape (batch, classes)
+y = torch.tensor([0])                  # the true class index (cat)
+
+q = F.softmax(z, dim=1)                # [[0.6590, 0.2424, 0.0986]]
+manual = -torch.log(q[0, y])           # 0.4170, the textbook formula
+library = F.cross_entropy(z, y)        # 0.4170, from logits directly
+
+# Binary / multi-label: pass logits, not probabilities
+loss = F.binary_cross_entropy_with_logits(logit, target)</code></pre>
+        <ul>
+          <li><b>Pass logits, not probabilities.</b> <code>F.cross_entropy</code> applies the log-softmax itself; applying softmax first is a classic silent bug. Working from logits also uses the log-sum-exp trick, so there is never a log(0).</li>
+          <li><b>Pick the output layer to match the task.</b> One true class: softmax with categorical cross-entropy. Several labels may be true: one sigmoid per label with binary cross-entropy.</li>
+          <li><b>Imbalance:</b> class weights, then focal loss. <b>Over-confidence:</b> label smoothing (ε about 0.05 to 0.1) or temperature scaling on a validation set.</li>
+          <li><b>Sanity check:</b> a starting loss near ln K means the model is guessing uniformly (ln 10 = 2.303 for 10 classes). A validation loss that rises while accuracy holds usually means growing over-confidence.</li>
+          <li><b>Units:</b> frameworks report nats; divide by ln 2 for bits, or exponentiate for perplexity.</li>
+        </ul>
+        <p class="refs"><b>Further reading:</b> Shannon, "A Mathematical Theory of Communication" (1948) · Jaynes, "Information Theory and Statistical Mechanics" (1957) · Cover and Thomas, <i>Elements of Information Theory</i> · MacKay, <i>Information Theory, Inference, and Learning Algorithms</i> · Goodfellow, Bengio, Courville, <i>Deep Learning</i>, ch. 3 and 6 · Hinton et al., "Distilling the Knowledge in a Neural Network" (2015) · Lin et al., "Focal Loss for Dense Object Detection" (2017) · Szegedy et al. (2016), label smoothing · van den Oord et al. (2018), InfoNCE.</p>
+      </details>
+
+      <h2 id="wrap">Takeaways</h2>
+      <ul>
+        <li>Entropy is average uncertainty (the log of the effective number of outcomes); cross-entropy is the average uncertainty under a wrong model; KL is the extra.</li>
+        <li>Training with cross-entropy is maximum likelihood, with the clean gradient q − p, and the same quantities are Gibbs entropy and free energy in physics.</li>
+        <li>Most probabilistic losses are cross-entropy or KL with a different target, direction, or weight.</li>
+      </ul>
+      <h3>Try it yourself</h3>
+      <ol>
+        <li>In Figure 3, set p = 0.9 and q = 0.5. How many extra bits per flip do you pay? (About 0.53.)</li>
+        <li>In Figure 4, pick the one-hot target. Why does the loss never quite reach zero?</li>
+        <li>In Figure 5, which fit would you want for a generative model that must never miss a mode?</li>
+      </ol>
+
+      <p class="post-nav"><a href="../blog.html">← Back to the blog</a></p>
+    </div>
+  </article>
+</main>
+
+<footer>
+  <div class="wrap">© <span id="year">2026</span> Naveen Madapana. Views expressed here are my own.</div>
+</footer>
+
+<script src="../assets/js/site.js?v=2"></script>
+<script src="../assets/js/xent.js?v=9"></script>
+<script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>
